@@ -8,11 +8,14 @@ const StoreSchema = new mongoose.Schema({
       trim: true,
       maxlength: [10, 'Store ID must e less than 10 chars']
   },
+  address: {
+    type: String,
+    required: [true, 'Please add an address']
+  },
   location: {
     type: {
-       type: String,]
-       enum: ['Point'], 
-       
+       type: String,
+       enum: ['Point'] 
     },
     coordinates: {
        type: [Number],
