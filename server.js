@@ -19,8 +19,11 @@ app.use(express.json());
 // Enable cors
 app.use(cors());
 
+// Set static folder
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Routes
-app.use('/api/v1/stores', require('./routes/stores'));
+app.get('/api/v1/stores', require('./routes/stores'));
 
 const PORT = process.env.PORT || 5000;
 
