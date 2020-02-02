@@ -1,4 +1,5 @@
-mapboxgl.accessToken = 'pk.eyJ1IjoiYW5kcmVjYXJyc2QyMDA4IiwiYSI6ImNrNjFtZ2ppMjA1NTQzanJ3cjNlamFpMzQifQ.krrCSAikcwGoAHrO0dxXZw';
+mapboxgl.accessToken = 
+'pk.eyJ1IjoiYW5kcmVjYXJyc2QyMDA4IiwiYSI6ImNrNjFtZ2ppMjA1NTQzanJ3cjNlamFpMzQifQ.krrCSAikcwGoAHrO0dxXZw';
 const map = new mapboxgl.Map({
 container: 'map',
 style: 'mapbox://styles/mapbox/streets-v11', 
@@ -6,7 +7,30 @@ zoom: 9,
 center: [-71-157895, 42.707741]
 });
 
-function loadMap() {
+// Fetch stores from API
+async function getStores() {
+  const res =  await fetch('/api/v1/stores');
+  const data = await res.json();
+
+  const stores = data.data.map(store => {
+      return{
+        type: 'Feature',
+              geometry: {
+                type: 'Point',
+                coordinates: [store.location.coordinates[0], store.location.coordinates[1]]
+              },
+              properties: {
+                storeId: store.storeId,
+                icon: 'shop'
+              }
+            }
+      });
+
+      loadMap(stores);
+}
+
+// Load map with stores
+function loadMap(stores) {
     map.on('load', function() {
       map.addLayer({
        id: 'points',
@@ -15,19 +39,8 @@ function loadMap() {
         type: 'geojson',
         data: {
           type: 'FeatureCollection',
-          features: [
-            {
-              type: 'Feature',
-              geometry: {
-                type: 'Point',
-                coordinates: [-71-157895, 42.707741]
-              },
-              properties: {
-                storeId: '0001',
-                icon: 'shop'
-              }
-            }
-          ]
+          features: stores,
+      
         }
     },
     layouts: {
@@ -41,3 +54,5 @@ function loadMap() {
    });
   }); 
 }
+
+getStores();
